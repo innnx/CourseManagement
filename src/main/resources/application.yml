@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: course-management
+  #数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/course_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+  #redis 配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+      timeout: 5000ms
+  #Jackson 配置
+  Jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT-8
+#Mybatis-Plus配置
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: delete
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+#Jwt 配置
+jwt:
+  secret: course-management-secret-key-2024-very-long-string-for-security
+  expiration: 86400000
+#服务端口
+server:
+  port: 8080
+#接口文档配置
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
