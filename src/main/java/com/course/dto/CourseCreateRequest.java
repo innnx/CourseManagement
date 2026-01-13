@@ -20,7 +20,7 @@ public class CourseCreateRequest {
     private String coverImage;
 
     @NotBlank(message = "价格不能为空")
-    @DecimalMin(value = "0.00",message = "价格不能为复数")
+    @DecimalMin(value = "0.00",message = "价格不能为负数")
     private BigDecimal price;
 
     @NotNull(message = "分类ID不能为空")
