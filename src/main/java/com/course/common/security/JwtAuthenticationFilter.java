@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final RedisTemplate<String,Object> redisTemplate;
     private final UserService userService;
 
-    private static final String TOKEN_PREFIX = "token:";
+    private static final String TOKEN_PREFIX = "token";
     private static final String HEADER_NAME = "Authorization";
     private static final String TOKEN_TYPE = "Bearer ";
 
@@ -45,6 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Long userId = jwtUtils.getUserIdFromToken(token);
                 //验证token在redis中是否有效（防止用户退出登录）
                 String redisToken = (String) redisTemplate.opsForValue().get(TOKEN_PREFIX + userId);
+                log.info("RequestToken: [{}], RedisToken: [{}]", token, redisToken);
                 if (token.equals(redisToken)){
                     //获取用户信息
                     User user = userService.getUserById(userId);
@@ -63,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 );
                         //将认证信息存入 SecurityContext
                         SecurityContextHolder.getContext().setAuthentication(authentication);
+                        log.info("用户权限已存入 SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
                         log.debug("用户{}认证成功",userId);
                     }
                 }

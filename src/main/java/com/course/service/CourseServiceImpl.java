@@ -162,7 +162,7 @@ public class CourseServiceImpl implements CourseService{
 
     //获取课程详情
     @Override
-    @Cacheable(value = "course",key = "#id")
+    //@Cacheable(value = "course",key = "#id")
     public CourseVo getCourseDetail(Long id) {
         //先从redis 获取缓存
         String cacheKey = COURSE_CACHE_KEY + id;
