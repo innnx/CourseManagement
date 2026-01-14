@@ -1,5 +1,7 @@
 package com.course.common.security;
 
+import com.course.entity.User;
+import com.course.service.UserService;
 import com.course.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final RedisTemplate<String,Object> redisTemplate;
+    private final UserService userService;
 
     private static final String TOKEN_PREFIX = "token:";
     private static final String HEADER_NAME = "Authorization";
@@ -43,17 +46,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 //验证token在redis中是否有效（防止用户退出登录）
                 String redisToken = (String) redisTemplate.opsForValue().get(TOKEN_PREFIX + userId);
                 if (token.equals(redisToken)){
-                    //创建认证对象
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userId,
-                                    null,
-                                    //将角色权限写入单元素集合中
-                                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-                            );
-                    //将认证信息存入SecurityContext
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    log.debug("用户{}认证成功",userId);
+                    //获取用户信息
+                    User user = userService.getUserById(userId);
+                    if (user!=null && user.getStatus() ==1){
+                        //创建权限列表(添加ROLE_前缀),Spring Security 内部对“角色（Role）”有一种默认约定，即必须以 ROLE_ 开头,如果数据库存的是 ADMIN
+                        // 这里会转为 ROLE_ADMIN。当你使用 @PreAuthorize("hasRole('ADMIN')") 时，Spring 会自动去匹配这个带前缀的字符串。
+                        String role = "ROLE_" + user.getRole();
+                        //创建认证对象,UsernamePasswordAuthenticationToken是Spring Security 用于封装用户身份的核心对象
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(
+                                        userId,
+                                        //在 JWT 流程中，我们已经校验过 Token 了，不需要再保存用户的原始密码。
+                                        null,
+                                        //SimpleGrantedAuthority 是权限的最小单位。通过这一步，系统知道了这个 ID 为 101 的人拥有 ROLE_ADMIN 权限。
+                                        Collections.singletonList(new SimpleGrantedAuthority(role))
+                                );
+                        //将认证信息存入 SecurityContext
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        log.debug("用户{}认证成功",userId);
+                    }
                 }
             }catch (Exception e){
                 log.error("Token解析失败：{}",e.getMessage());
