@@ -46,7 +46,7 @@ public class CourseOrderController {
 
     @Operation(summary = "查询我的订单")
     @GetMapping("/my")
-    public Result<Page<OrderVo>> queryMyOrder(@RequestBody OrderQueryRequest request){
+    public Result<Page<OrderVo>> queryMyOrder(OrderQueryRequest request){
         Long usrId = SecurityUtils.getCurrentUsrId();
         Page<OrderVo> voPage = courseOrderService.queryMyOrders(request, usrId);
         return Result.success(voPage);

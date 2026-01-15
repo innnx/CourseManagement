@@ -73,7 +73,8 @@ public class CourseOrderServiceImpl implements CourseOrderService{
             return orderNo;
         }finally {
             //释放锁
-            redisTemplate.delete(lockKey);
+            //redisTemplate.delete(lockKey);
+            log.info("下单完成：10s后自动解锁");
         }
     }
 
@@ -107,6 +108,10 @@ public class CourseOrderServiceImpl implements CourseOrderService{
         course.setStudentCount(course.getStudentCount()+1);
         courseMapper.updateById(course);
         log.info("订单支付成功：orderNo={},userId={}",orderNo,userId);
+        // 测试事务回滚
+        /*if (true) {
+            throw new RuntimeException("测试异常");
+        }*/
     }
 
     //取消订单

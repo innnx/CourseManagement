@@ -17,13 +17,4 @@ public enum OrderStatus {
         this.code = code;
         this.name = name;
     }
-
-    public static String getStatusName(int code) {
-        for (OrderStatus status : OrderStatus.values()) {
-            if (status.getCode() == code) {
-                return status.getName();
-            }
-        }
-        return "未知状态";
-    }
 }
