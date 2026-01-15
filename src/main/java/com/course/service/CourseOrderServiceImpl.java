@@ -172,6 +172,7 @@ public class CourseOrderServiceImpl implements CourseOrderService{
         return convertToVo(order);
     }
 
+    //检查是否购买过该课程
     @Override
     public boolean hasPurchased(Long userId, Long courseId) {
         LambdaQueryWrapper<CourseOrder> wrapper = new LambdaQueryWrapper<>();
