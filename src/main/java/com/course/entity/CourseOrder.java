@@ -1,6 +1,7 @@
 package com.course.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.course.common.constant.OrderStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ public class CourseOrder {
 
     private BigDecimal price;
 
-    private Integer status; //0-待支付，1-已支付 2-已取消
+    private OrderStatus status; //0-待支付，1-已支付 2-已取消
 
     private LocalDateTime payTime;
 
