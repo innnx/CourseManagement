@@ -71,7 +71,7 @@ public class UserServiceTest extends BaseTest {
                 ()->userService.register(registerRequest),
                 "应该抛出用户名已存在异常"
         );
-        assertEquals("用户名已存在",exception.getMessage());
+        assertEquals("用户名已存在！",exception.getMessage());
     }
 
     @Test

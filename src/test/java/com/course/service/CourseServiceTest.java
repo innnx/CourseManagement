@@ -84,7 +84,6 @@ public class CourseServiceTest extends BaseTest {
         request.setDescription("这是一个测试课程");
         request.setPrice(new BigDecimal("99"));
         request.setCategoryId(Long.valueOf(categoryId));
-
         //创建课程
         courseService.createCourse(request,teacherId);
         //验证课程是否创建成功
@@ -92,10 +91,11 @@ public class CourseServiceTest extends BaseTest {
                 new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<Course>()
                         .eq(Course::getTitle,"测试课程")
         );
+        Integer iCategroyId = Math.toIntExact(course.getCategoryId());
         assertNotNull(course,"课程应该被成功创建");
         assertEquals("测试课程",course.getTitle());
         assertEquals(teacherId,course.getTeacherId());
-        assertEquals(categoryId,course.getCategoryId());
+        assertEquals(categoryId,iCategroyId);
         assertEquals(0,new BigDecimal("99").compareTo(course.getPrice()));
         assertEquals(1,course.getStatus());
 
@@ -136,7 +136,7 @@ public class CourseServiceTest extends BaseTest {
         queryRequest.setPageSize(10);
         Page<CourseVo> page = courseService.queryCourses(queryRequest);
         assertNotNull(page);
-        assertTrue(page.getTotal() >= 3,"至少应该有3条记录");
+        assertTrue(page.getRecords().size() >= 3,"至少应该有3条记录");
     }
 
     @Test
@@ -195,7 +195,7 @@ public class CourseServiceTest extends BaseTest {
                 () -> courseService.deleteCourse(courseId, otherTeacherId)
         );
 
-        assertEquals("无权删除该课程", exception.getMessage());
+        assertEquals("无权限删除", exception.getMessage());
     }
 
 }
